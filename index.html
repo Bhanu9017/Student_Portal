@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EduPortal — College System</title>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+<!-- ============================================================
+     RADIO INPUTS — drive page switching inside each portal
+     via CSS sibling selectors (no JS needed for navigation)
+============================================================ -->
+
+<!-- Student page nav -->
+<input type="radio" name="s-page" id="s-dashboard"  class="nav-radio" checked />
+<input type="radio" name="s-page" id="s-marks"       class="nav-radio" />
+<input type="radio" name="s-page" id="s-attendance"  class="nav-radio" />
+<input type="radio" name="s-page" id="s-notices"     class="nav-radio" />
+<input type="radio" name="s-page" id="s-news"        class="nav-radio" />
+
+<!-- Student attendance sub-tabs -->
+<input type="radio" name="s-att" id="s-att-daily"   class="nav-radio" checked />
+<input type="radio" name="s-att" id="s-att-monthly" class="nav-radio" />
+<input type="radio" name="s-att" id="s-att-yearly"  class="nav-radio" />
+
+<!-- Parent page nav -->
+<input type="radio" name="p-page" id="p-overview"    class="nav-radio" checked />
+<input type="radio" name="p-page" id="p-marks"       class="nav-radio" />
+<input type="radio" name="p-page" id="p-attendance"  class="nav-radio" />
+<input type="radio" name="p-page" id="p-notices"     class="nav-radio" />
+<input type="radio" name="p-page" id="p-events"      class="nav-radio" />
+<input type="radio" name="p-page" id="p-teachers"    class="nav-radio" />
+
+<!-- Teacher page nav -->
+<input type="radio" name="t-page" id="t-students"    class="nav-radio" checked />
+<input type="radio" name="t-page" id="t-performance" class="nav-radio" />
+<input type="radio" name="t-page" id="t-attendance"  class="nav-radio" />
+<input type="radio" name="t-page" id="t-marks"       class="nav-radio" />
+<input type="radio" name="t-page" id="t-notices"     class="nav-radio" />
+
+
+<!-- ============================================================
+     LOGIN SCREEN  (shown by default, hidden by JS after login)
+============================================================ -->
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-logo">Edu<span>Portal</span></div>
+    <div class="login-subtitle">// Integrated College Management System</div>
+
+    <div class="form-group">
+      <label>Username</label>
+      <input type="text" id="login-username" placeholder="student / parent / teacher" />
+    </div>
+    <div class="form-group">
+      <label>Password</label>
+      <input type="password" id="login-password" placeholder="••••••••" />
+    </div>
+
+    <button class="login-btn" onclick="handleLogin()">Access Portal →</button>
+    <div id="login-error" class="login-error"></div>
+
+    <div class="demo-hint">
+      <strong>Demo credentials:</strong><br />
+      Student &nbsp;→ username: <strong>student</strong> &nbsp; password: <strong>stu123</strong><br />
+      Parent &nbsp;&nbsp;→ username: <strong>parent</strong> &nbsp;&nbsp; password: <strong>par123</strong><br />
+      Teacher →  username: <strong>teacher</strong> &nbsp; password: <strong>tea123</strong>
+    </div>
+    <div class="login-theme-bar">
+      <span class="theme-switcher-label">Theme</span>
+      <button class="theme-btn t-dark   active" onclick="setTheme('dark')"   title="Dark"></button>
+      <button class="theme-btn t-light"          onclick="setTheme('light')"  title="Light"></button>
+      <button class="theme-btn t-ocean"          onclick="setTheme('ocean')"  title="Ocean"></button>
+      <button class="theme-btn t-forest"         onclick="setTheme('forest')" title="Forest"></button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================
+     STUDENT PORTAL
+============================================================ -->
+<div id="portal-student" class="portal">
+
+  <div class="topbar">
+    <div class="topbar-logo">Edu<span>Portal</span></div>
+    <div class="topbar-user">
+      <div class="theme-switcher" title="Switch theme">
+        <span class="theme-switcher-label">Theme</span>
+        <button class="theme-btn t-dark   active" onclick="setTheme('dark')"   title="Dark"></button>
+        <button class="theme-btn t-light"          onclick="setTheme('light')"  title="Light"></button>
+        <button class="theme-btn t-ocean"          onclick="setTheme('ocean')"  title="Ocean"></button>
+        <button class="theme-btn t-forest"         onclick="setTheme('forest')" title="Forest"></button>
+      </div>
+      <span class="topbar-name">Arjun Sharma</span>
+      <span class="role-badge student">Student</span>
+      <button class="logout-btn" onclick="handleLogout()">Logout</button>
+    </div>
+  </div>
+
+  <div class="app-body">
+
+    <!-- Sidebar -->
+    <nav class="sidebar">
+      <div class="nav-section">
+        <div class="nav-section-label">My Portal</div>
+        <label for="s-dashboard"  class="nav-item" id="lbl-s-dashboard"><span class="nav-icon">#</span>Dashboard</label>
+        <label for="s-marks"      class="nav-item" id="lbl-s-marks"><span class="nav-icon">%</span>My Marks</label>
+        <label for="s-attendance" class="nav-item" id="lbl-s-attendance"><span class="nav-icon">@</span>Attendance</label>
+      </div>
+      <div class="nav-section">
+        <div class="nav-section-label">Campus</div>
+        <label for="s-notices" class="nav-item" id="lbl-s-notices"><span class="nav-icon">!</span>Notices</label>
+        <label for="s-news"    class="nav-item" id="lbl-s-news"><span class="nav-icon">*</span>News &amp; Events</label>
+      </div>
+    </nav>
+
+    <main class="main-content">
+
+      <!-- STUDENT: DASHBOARD -->
+      <section class="page" id="page-s-dashboard">
+        <div class="page-header">
+          <h1>Dashboard</h1>
+          <p>Welcome back, Arjun Sharma — Computer Science, Year 2</p>
+        </div>
+        <div class="welcome-banner">
+          <h2>Hello, Arjun! 👋</h2>
+          <p>Roll No: <strong>STU001</strong> &nbsp;·&nbsp; Branch: <strong>Computer Science</strong> &nbsp;·&nbsp; Year <strong>2</strong></p>
+        </div>
+        <div class="stats-grid">
+          <div class="stat-card purple">
+            <div class="stat-label">Overall Score</div>
+            <div class="stat-value" id="student-dashboard-score">76%</div>
+            <div class="stat-sub" id="student-dashboard-grade">Grade: <strong>A</strong></div>
+          </div>
+          <div class="stat-card green">
+            <div class="stat-label">Attendance</div>
+            <div class="stat-value" id="student-dashboard-attendance">85%</div>
+            <div class="stat-sub" id="student-dashboard-attendance-status">Good standing</div>
+          </div>
+          <div class="stat-card purple">
+            <div class="stat-label">Subjects</div>
+            <div class="stat-value">5</div>
+            <div class="stat-sub">This semester</div>
+          </div>
+          <div class="stat-card gold">
+            <div class="stat-label">Notices</div>
+            <div class="stat-value">6</div>
+            <div class="stat-sub">Active announcements</div>
+          </div>
+        </div>
+        <div class="two-col">
+          <div class="section-card">
+            <div class="section-card-header"><h3>Marks Summary</h3></div>
+            <div class="section-card-body">
+              <table>
+                <thead><tr><th>Subject</th><th>Score</th><th>Grade</th></tr></thead>
+                <tbody id="student-dashboard-marks-body">
+                  <tr><td>Data Structures</td>  <td>120/150</td><td><span class="grade A">A</span></td></tr>
+                  <tr><td>Operating Systems</td><td>108/150</td><td><span class="grade B">B</span></td></tr>
+                  <tr><td>DBMS</td>             <td>127/150</td><td><span class="grade A">A+</span></td></tr>
+                  <tr><td>Computer Networks</td><td>114/150</td><td><span class="grade A">A</span></td></tr>
+                  <tr><td>Mathematics-III</td>  <td>103/150</td><td><span class="grade B">B</span></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="section-card">
+            <div class="section-card-header"><h3>Recent Notices</h3></div>
+            <div class="section-card-body" id="dash-recent-notices">
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- STUDENT: MARKS -->
+      <section class="page" id="page-s-marks">
+        <div class="page-header">
+          <h1>Marks Report</h1>
+          <p>Arjun Sharma — STU001</p>
+        </div>
+        <div class="stats-grid">
+          <div class="stat-card purple"><div class="stat-label">Overall</div><div class="stat-value" id="student-marks-overall">76%</div><div class="stat-sub" id="student-marks-grade">Grade: A</div></div>
+          <div class="stat-card green"><div class="stat-label">Data Structures Mid</div><div class="stat-value" id="student-marks-mid">42</div><div class="stat-sub">Out of 50</div></div>
+          <div class="stat-card red"><div class="stat-label">Data Structures End</div><div class="stat-value" id="student-marks-end">72</div><div class="stat-sub">Out of 100</div></div>
+        </div>
+        <div class="section-card">
+          <div class="section-card-header"><h3>Subject-wise Marks</h3></div>
+          <div class="section-card-body table-scroll">
+            <table>
+              <thead>
+                <tr><th>Subject</th><th>Mid</th><th>End</th><th>Total</th><th>%</th><th>Grade</th><th class="bar-col">Performance</th></tr>
+              </thead>
+              <tbody id="student-marks-body">
+                <tr><td>Data Structures</td>  <td>42</td><td>78</td><td><strong>120</strong>/150</td><td>80%</td><td><span class="grade A">A</span></td>  <td><div class="progress-bar"><div class="progress-fill good"    style="width:80%"></div></div></td></tr>
+                <tr><td>Operating Systems</td><td>38</td><td>70</td><td><strong>108</strong>/150</td><td>72%</td><td><span class="grade B">B</span></td>  <td><div class="progress-bar"><div class="progress-fill average" style="width:72%"></div></div></td></tr>
+                <tr><td>DBMS</td>             <td>45</td><td>82</td><td><strong>127</strong>/150</td><td>85%</td><td><span class="grade A">A+</span></td> <td><div class="progress-bar"><div class="progress-fill good"    style="width:85%"></div></div></td></tr>
+                <tr><td>Computer Networks</td><td>40</td><td>74</td><td><strong>114</strong>/150</td><td>76%</td><td><span class="grade A">A</span></td>  <td><div class="progress-bar"><div class="progress-fill good"    style="width:76%"></div></div></td></tr>
+                <tr><td>Mathematics-III</td>  <td>35</td><td>68</td><td><strong>103</strong>/150</td><td>69%</td><td><span class="grade B">B</span></td>  <td><div class="progress-bar"><div class="progress-fill average" style="width:69%"></div></div></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- STUDENT: ATTENDANCE -->
+      <section class="page" id="page-s-attendance">
+        <div class="page-header">
+          <h1>Attendance</h1>
+          <p>Arjun Sharma — STU001</p>
+        </div>
+        <div class="stats-grid">
+          <div class="stat-card green">
+            <div class="stat-label">Yearly Average</div>
+            <div class="stat-value" id="student-attendance-average">85%</div>
+            <div class="stat-sub" id="student-attendance-badge"><span class="badge ok">Good</span></div>
+          </div>
+        </div>
+        <div class="att-toggle">
+          <label for="s-att-daily"   class="att-btn" id="lbl-s-att-daily">Daily</label>
+          <label for="s-att-monthly" class="att-btn" id="lbl-s-att-monthly">Monthly</label>
+          <label for="s-att-yearly"  class="att-btn" id="lbl-s-att-yearly">Yearly Chart</label>
+        </div>
+        <!-- Daily -->
+        <div class="att-panel" id="att-s-daily">
+          <div class="section-card">
+            <div class="section-card-header"><h3>December 2024 — Daily View</h3><span>21P / 4A / 25 Days</span></div>
+            <div class="section-card-body">
+              <div class="cal-legend">
+                <span><span class="cal-dot present"></span>Present</span>
+                <span><span class="cal-dot absent"></span>Absent</span>
+                <span><span class="cal-dot holiday"></span>Holiday</span>
+              </div>
+              <div class="mini-cal">
+                <div class="cal-day header">Su</div><div class="cal-day header">Mo</div><div class="cal-day header">Tu</div><div class="cal-day header">We</div><div class="cal-day header">Th</div><div class="cal-day header">Fr</div><div class="cal-day header">Sa</div>
+                <div class="cal-day holiday">1</div><div class="cal-day present">2</div><div class="cal-day present">3</div><div class="cal-day present">4</div><div class="cal-day present">5</div><div class="cal-day present">6</div><div class="cal-day holiday">7</div>
+                <div class="cal-day holiday">8</div><div class="cal-day present">9</div><div class="cal-day absent">10</div><div class="cal-day present">11</div><div class="cal-day present">12</div><div class="cal-day present">13</div><div class="cal-day holiday">14</div>
+                <div class="cal-day holiday">15</div><div class="cal-day present">16</div><div class="cal-day present">17</div><div class="cal-day absent">18</div><div class="cal-day present">19</div><div class="cal-day present">20</div><div class="cal-day holiday">21</div>
+                <div class="cal-day holiday">22</div><div class="cal-day present">23</div><div class="cal-day present">24</div><div class="cal-day present">25</div><div class="cal-day absent">26</div><div class="cal-day present">27</div><div class="cal-day holiday">28</div>
+                <div class="cal-day holiday">29</div><div class="cal-day absent">30</div><div class="cal-day present">31</div>
+              </div>
+              <p class="att-summary">This month: <strong>84%</strong> attendance</p>
+            </div>
+          </div>
+        </div>
+        <!-- Monthly -->
+        <div class="att-panel" id="att-s-monthly">
+          <div class="section-card">
+            <div class="section-card-header"><h3>Monthly Attendance</h3></div>
+            <div class="section-card-body table-scroll">
+              <table>
+                <thead><tr><th>Month</th><th>Attendance</th><th>Status</th><th class="bar-col">Bar</th></tr></thead>
+                <tbody>
+                  <tr><td>Jan</td><td>92%</td><td><span class="badge ok">Good</span></td>    <td><div class="progress-bar"><div class="progress-fill good"    style="width:92%"></div></div></td></tr>
+                  <tr><td>Feb</td><td>88%</td><td><span class="badge ok">Good</span></td>    <td><div class="progress-bar"><div class="progress-fill good"    style="width:88%"></div></div></td></tr>
+                  <tr><td>Mar</td><td>76%</td><td><span class="badge warn">Average</span></td><td><div class="progress-bar"><div class="progress-fill average" style="width:76%"></div></div></td></tr>
+                  <tr><td>Apr</td><td>95%</td><td><span class="badge ok">Good</span></td>    <td><div class="progress-bar"><div class="progress-fill good"    style="width:95%"></div></div></td></tr>
+                  <tr><td>May</td><td>85%</td><td><span class="badge ok">Good</span></td>    <td><div class="progress-bar"><div class="progress-fill good"    style="width:85%"></div></div></td></tr>
+                  <tr><td>Jun</td><td>90%</td><td><span class="badge ok">Good</span></td>    <td><div class="progress-bar"><div class="progress-fill good"    style="width:90%"></div></div></td></tr>
+                  <tr><td>Jul</td><td>78%</td><td><span class="badge warn">Average</span></td><td><div class="progress-bar"><div class="progress-fill average" style="width:78%"></div></div></td></tr>
+                  <tr><td>Aug</td><td>82%</td><td><span class="badge ok">Good</span></td>    <td><div class="progress-bar"><div class="progress-fill good"    style="width:82%"></div></div></td></tr>
+                  <tr><td>Sep</td><td>89%</td><td><span class="badge ok">Good</span></td>    <td><div class="progress-bar"><div class="progress-fill good"    style="width:89%"></div></div></td></tr>
+                  <tr><td>Oct</td><td>93%</td><td><span class="badge ok">Good</span></td>    <td><div class="progress-bar"><div class="progress-fill good"    style="width:93%"></div></div></td></tr>
+                  <tr><td>Nov</td><td>87%</td><td><span class="badge ok">Good</span></td>    <td><div class="progress-bar"><div class="progress-fill good"    style="width:87%"></div></div></td></tr>
+                  <tr><td>Dec</td><td>84%</td><td><span class="badge ok">Good</span></td>    <td><div class="progress-bar"><div class="progress-fill good"    style="width:84%"></div></div></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <!-- Yearly chart -->
+        <div class="att-panel" id="att-s-yearly">
+          <div class="section-card">
+            <div class="section-card-header"><h3>Yearly Attendance Chart</h3></div>
+            <div class="section-card-body">
+              <div class="chart-wrap" id="att-chart"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- STUDENT: NOTICES -->
+      <section class="page" id="page-s-notices">
+        <div class="page-header"><h1>Notices</h1><p>Important announcements — exams, general &amp; urgent</p></div>
+        <div id="student-notices-list"></div>
+      </section>
+
+      <!-- STUDENT: EVENTS -->
+      <section class="page" id="page-s-news">
+        <div class="page-header"><h1>Events &amp; Holidays</h1><p>Campus happenings, fests and holiday announcements</p></div>
+        <div id="student-events-list"></div>
+      </section>
+
+    </main>
+  </div>
+</div><!-- /portal-student -->
+
+
+<!-- ============================================================
+     PARENT PORTAL
+============================================================ -->
+<div id="portal-parent" class="portal">
+
+  <div class="topbar">
+    <div class="topbar-logo">Edu<span>Portal</span></div>
+    <div class="topbar-user">
+      <div class="theme-switcher" title="Switch theme">
+        <span class="theme-switcher-label">Theme</span>
+        <button class="theme-btn t-dark   active" onclick="setTheme('dark')"   title="Dark"></button>
+        <button class="theme-btn t-light"          onclick="setTheme('light')"  title="Light"></button>
+        <button class="theme-btn t-ocean"          onclick="setTheme('ocean')"  title="Ocean"></button>
+        <button class="theme-btn t-forest"         onclick="setTheme('forest')" title="Forest"></button>
+      </div>
+      <span class="topbar-name">Rajesh Sharma</span>
+      <span class="role-badge parent">Parent</span>
+      <button class="logout-btn" onclick="handleLogout()">Logout</button>
+    </div>
+  </div>
+
+  <div class="app-body">
+    <nav class="sidebar">
+      <div class="nav-section">
+        <div class="nav-section-label">Child's Info</div>
+        <label for="p-overview"   class="nav-item" id="lbl-p-overview"><span class="nav-icon">o</span>Overview</label>
+        <label for="p-marks"      class="nav-item" id="lbl-p-marks"><span class="nav-icon">%</span>Marks</label>
+        <label for="p-attendance" class="nav-item" id="lbl-p-attendance"><span class="nav-icon">@</span>Attendance</label>
+        <label for="p-notices"    class="nav-item" id="lbl-p-notices"><span class="nav-icon">!</span>Notices</label>
+        <label for="p-events"     class="nav-item" id="lbl-p-events"><span class="nav-icon">*</span>Events</label>
+        <label for="p-teachers"   class="nav-item" id="lbl-p-teachers"><span class="nav-icon">T</span>Teacher Contacts</label>
+      </div>
+    </nav>
+
+    <main class="main-content">
+
+      <!-- PARENT: OVERVIEW -->
+      <section class="page" id="page-p-overview">
+        <div class="page-header"><h1>Child Overview</h1><p>Viewing information for Arjun Sharma</p></div>
+        <div class="section-card">
+          <div class="section-card-header"><h3>Student Profile</h3></div>
+          <div class="section-card-body">
+            <div class="contact-card">
+              <div class="avatar">🎓</div>
+              <div class="contact-info">
+                <div class="contact-name">Arjun Sharma</div>
+                <div class="contact-sub">Roll No: STU001 &nbsp;·&nbsp; Computer Science &nbsp;·&nbsp; Year 2</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="stats-grid">
+          <div class="stat-card purple"><div class="stat-label">Academic Score</div><div class="stat-value" id="parent-overview-score">76%</div><div class="stat-sub" id="parent-overview-grade">Grade: A</div></div>
+          <div class="stat-card green"><div class="stat-label">Attendance</div><div class="stat-value" id="parent-overview-attendance">85%</div><div class="stat-sub" id="parent-overview-attendance-status"><span class="badge ok">Good</span></div></div>
+          <div class="stat-card purple"><div class="stat-label">Subjects</div><div class="stat-value">5</div><div class="stat-sub">This semester</div></div>
+          <div class="stat-card gold"><div class="stat-label">Rank in Class</div><div class="stat-value">4th</div><div class="stat-sub">Out of 60</div></div>
+        </div>
+        <div class="section-card">
+          <div class="section-card-header"><h3>Recent Activity</h3></div>
+          <div class="section-card-body">
+            <div class="notice-item general"><span class="notice-tag general">update</span><div class="notice-title">DBMS Mid-Term submitted — scored 45/50</div><div class="notice-date">2024-11-20</div></div>
+            <div class="notice-item exam"><span class="notice-tag exam">exam</span><div class="notice-title">Practical exam scheduled for December 5</div><div class="notice-date">2024-11-15</div></div>
+            <div class="notice-item event"><span class="notice-tag event">event</span><div class="notice-title">Registered for Tech Fest hackathon team</div><div class="notice-date">2024-11-10</div></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- PARENT: MARKS -->
+      <section class="page" id="page-p-marks">
+        <div class="page-header"><h1>Child's Marks</h1><p>Arjun Sharma — STU001</p></div>
+        <div class="stats-grid">
+          <div class="stat-card purple"><div class="stat-label">Overall</div><div class="stat-value" id="parent-marks-overall">76%</div><div class="stat-sub" id="parent-marks-grade">Grade: A</div></div>
+          <div class="stat-card green"><div class="stat-label">Mid Term</div><div class="stat-value" id="parent-marks-mid">42</div><div class="stat-sub">Out of 50</div></div>
+          <div class="stat-card red"><div class="stat-label">End Term</div><div class="stat-value" id="parent-marks-end">72</div><div class="stat-sub">Out of 100</div></div>
+        </div>
+        <div class="section-card">
+          <div class="section-card-header"><h3>Subject-wise Marks</h3></div>
+          <div class="section-card-body table-scroll">
+            <table>
+              <thead><tr><th>Subject</th><th>Mid</th><th>End</th><th>Total</th><th>%</th><th>Grade</th><th class="bar-col">Performance</th></tr></thead>
+              <tbody id="parent-marks-body">
+                <tr><td>Data Structures</td>  <td>42</td><td>78</td><td><strong>120</strong>/150</td><td>80%</td><td><span class="grade A">A</span></td>  <td><div class="progress-bar"><div class="progress-fill good"    style="width:80%"></div></div></td></tr>
+                <tr><td>Operating Systems</td><td>38</td><td>70</td><td><strong>108</strong>/150</td><td>72%</td><td><span class="grade B">B</span></td>  <td><div class="progress-bar"><div class="progress-fill average" style="width:72%"></div></div></td></tr>
+                <tr><td>DBMS</td>             <td>45</td><td>82</td><td><strong>127</strong>/150</td><td>85%</td><td><span class="grade A">A+</span></td> <td><div class="progress-bar"><div class="progress-fill good"    style="width:85%"></div></div></td></tr>
+                <tr><td>Computer Networks</td><td>40</td><td>74</td><td><strong>114</strong>/150</td><td>76%</td><td><span class="grade A">A</span></td>  <td><div class="progress-bar"><div class="progress-fill good"    style="width:76%"></div></div></td></tr>
+                <tr><td>Mathematics-III</td>  <td>35</td><td>68</td><td><strong>103</strong>/150</td><td>69%</td><td><span class="grade B">B</span></td>  <td><div class="progress-bar"><div class="progress-fill average" style="width:69%"></div></div></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- PARENT: ATTENDANCE -->
+      <section class="page" id="page-p-attendance">
+        <div class="page-header"><h1>Child's Attendance</h1><p>Arjun Sharma — STU001</p></div>
+        <div class="stats-grid">
+          <div class="stat-card green"><div class="stat-label">Yearly Average</div><div class="stat-value" id="parent-attendance-average">85%</div><div class="stat-sub" id="parent-attendance-badge"><span class="badge ok">Good</span></div></div>
+          <div class="stat-card purple"><div class="stat-label">Days Present</div><div class="stat-value" id="parent-attendance-present">204</div><div class="stat-sub">Out of 240</div></div>
+          <div class="stat-card red"><div class="stat-label">Days Absent</div><div class="stat-value" id="parent-attendance-absent">36</div><div class="stat-sub">This year</div></div>
+        </div>
+        <div class="section-card">
+          <div class="section-card-header"><h3>Monthly Breakdown</h3></div>
+          <div class="section-card-body table-scroll">
+            <table>
+              <thead><tr><th>Month</th><th>Attendance</th><th>Status</th><th class="bar-col">Bar</th></tr></thead>
+              <tbody>
+                <tr><td>Jan</td><td>92%</td><td><span class="badge ok">Good</span></td>    <td><div class="progress-bar"><div class="progress-fill good"    style="width:92%"></div></div></td></tr>
+                <tr><td>Feb</td><td>88%</td><td><span class="badge ok">Good</span></td>    <td><div class="progress-bar"><div class="progress-fill good"    style="width:88%"></div></div></td></tr>
+                <tr><td>Mar</td><td>76%</td><td><span class="badge warn">Average</span></td><td><div class="progress-bar"><div class="progress-fill average" style="width:76%"></div></div></td></tr>
+                <tr><td>Apr</td><td>95%</td><td><span class="badge ok">Good</span></td>    <td><div class="progress-bar"><div class="progress-fill good"    style="width:95%"></div></div></td></tr>
+                <tr><td>May</td><td>85%</td><td><span class="badge ok">Good</span></td>    <td><div class="progress-bar"><div class="progress-fill good"    style="width:85%"></div></div></td></tr>
+                <tr><td>Jun</td><td>90%</td><td><span class="badge ok">Good</span></td>    <td><div class="progress-bar"><div class="progress-fill good"    style="width:90%"></div></div></td></tr>
+                <tr><td>Jul</td><td>78%</td><td><span class="badge warn">Average</span></td><td><div class="progress-bar"><div class="progress-fill average" style="width:78%"></div></div></td></tr>
+                <tr><td>Aug</td><td>82%</td><td><span class="badge ok">Good</span></td>    <td><div class="progress-bar"><div class="progress-fill good"    style="width:82%"></div></div></td></tr>
+                <tr><td>Sep</td><td>89%</td><td><span class="badge ok">Good</span></td>    <td><div class="progress-bar"><div class="progress-fill good"    style="width:89%"></div></div></td></tr>
+                <tr><td>Oct</td><td>93%</td><td><span class="badge ok">Good</span></td>    <td><div class="progress-bar"><div class="progress-fill good"    style="width:93%"></div></div></td></tr>
+                <tr><td>Nov</td><td>87%</td><td><span class="badge ok">Good</span></td>    <td><div class="progress-bar"><div class="progress-fill good"    style="width:87%"></div></div></td></tr>
+                <tr><td>Dec</td><td>84%</td><td><span class="badge ok">Good</span></td>    <td><div class="progress-bar"><div class="progress-fill good"    style="width:84%"></div></div></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- PARENT: NOTICES -->
+      <section class="page" id="page-p-notices">
+        <div class="page-header"><h1>Notices</h1><p>Important announcements — exams, general &amp; urgent</p></div>
+        <div id="parent-notices-list"></div>
+      </section>
+
+      <!-- PARENT: EVENTS -->
+      <section class="page" id="page-p-events">
+        <div class="page-header"><h1>Events &amp; Holidays</h1><p>Campus happenings, fests and holiday announcements</p></div>
+        <div id="parent-events-list"></div>
+      </section>
+
+      <!-- PARENT: TEACHER CONTACTS -->
+      <section class="page" id="page-p-teachers">
+        <div class="page-header"><h1>Teacher Contacts</h1><p>Reach out to faculty directly</p></div>
+        <div class="contact-card">
+          <div class="avatar">👩‍🏫</div>
+          <div class="contact-info">
+            <div class="contact-name">Dr. Anita Bose</div>
+            <div class="contact-sub">Data Structures &amp; Algorithms &nbsp;·&nbsp; CSE</div>
+            <div class="contact-sub">📞 99887-76655 &nbsp;·&nbsp; ✉ anita.bose@college.edu</div>
+          </div>
+        </div>
+        <div class="contact-card">
+          <div class="avatar">👨‍🏫</div>
+          <div class="contact-info">
+            <div class="contact-name">Prof. R.K. Verma</div>
+            <div class="contact-sub">Operating Systems &nbsp;·&nbsp; CSE</div>
+            <div class="contact-sub">📞 99776-65544 &nbsp;·&nbsp; ✉ rk.verma@college.edu</div>
+          </div>
+        </div>
+        <div class="contact-card">
+          <div class="avatar">👩‍🏫</div>
+          <div class="contact-info">
+            <div class="contact-name">Dr. Kavita Joshi</div>
+            <div class="contact-sub">Mathematics-III &nbsp;·&nbsp; Maths Dept</div>
+            <div class="contact-sub">📞 99554-43322 &nbsp;·&nbsp; ✉ kavita.joshi@college.edu</div>
+          </div>
+        </div>
+        <div class="contact-card">
+          <div class="avatar">👨‍🏫</div>
+          <div class="contact-info">
+            <div class="contact-name">Prof. Suresh Rao</div>
+            <div class="contact-sub">DBMS &amp; Computer Networks &nbsp;·&nbsp; CSE</div>
+            <div class="contact-sub">📞 99443-32211 &nbsp;·&nbsp; ✉ suresh.rao@college.edu</div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+</div><!-- /portal-parent -->
+
+
+<!-- ============================================================
+     TEACHER PORTAL
+============================================================ -->
+<div id="portal-teacher" class="portal">
+
+  <div class="topbar">
+    <div class="topbar-logo">Edu<span>Portal</span></div>
+    <div class="topbar-user">
+      <div class="theme-switcher" title="Switch theme">
+        <span class="theme-switcher-label">Theme</span>
+        <button class="theme-btn t-dark   active" onclick="setTheme('dark')"   title="Dark"></button>
+        <button class="theme-btn t-light"          onclick="setTheme('light')"  title="Light"></button>
+        <button class="theme-btn t-ocean"          onclick="setTheme('ocean')"  title="Ocean"></button>
+        <button class="theme-btn t-forest"         onclick="setTheme('forest')" title="Forest"></button>
+      </div>
+      <span class="topbar-name">Dr. Anita Bose</span>
+      <span class="role-badge teacher">Teacher</span>
+      <button class="logout-btn" onclick="handleLogout()">Logout</button>
+    </div>
+  </div>
+
+  <div class="app-body">
+    <nav class="sidebar">
+      <div class="nav-section">
+        <div class="nav-section-label">Teacher Panel</div>
+        <label for="t-students"    class="nav-item" id="lbl-t-students"><span class="nav-icon">S</span>Student List</label>
+        <label for="t-performance" class="nav-item" id="lbl-t-performance"><span class="nav-icon">P</span>Performance</label>
+        <label for="t-attendance"  class="nav-item" id="lbl-t-attendance"><span class="nav-icon">@</span>Attendance</label>
+        <label for="t-marks"       class="nav-item" id="lbl-t-marks"><span class="nav-icon">%</span>Edit Marks</label>
+        <label for="t-notices"     class="nav-item" id="lbl-t-notices"><span class="nav-icon">!</span>Post Notice</label>
+      </div>
+    </nav>
+
+    <main class="main-content">
+
+      <!-- TEACHER: STUDENT LIST -->
+      <section class="page" id="page-t-students">
+        <div class="page-header"><h1>Student List</h1><p>CSE Department — Year 2 &nbsp;·&nbsp; <span style="color:var(--accent);font-size:.75rem;">Click a row to view parent details</span></p></div>
+        <div class="section-card">
+          <div class="section-card-header"><h3>CSE Students</h3></div>
+          <div class="section-card-body table-scroll">
+            <table id="student-table">
+              <thead><tr><th>Roll No</th><th>Name</th><th>Year</th><th>Branch</th><th>Overall %</th><th>Attendance</th><th>Grade</th><th></th></tr></thead>
+              <tbody id="teacher-student-list-body">
+                <tr class="student-row" data-id="STU001" onclick="openStudentDetail('STU001')">
+                  <td>STU001</td><td><strong>Arjun Sharma</strong></td><td>2</td><td>CSE</td><td>76%</td><td><span class="badge ok">85%</span></td><td><span class="grade A">A</span></td>
+                  <td><span class="row-expand-hint">View ›</span></td>
+                </tr>
+                <tr class="student-row" data-id="STU002" onclick="openStudentDetail('STU002')">
+                  <td>STU002</td><td><strong>Priya Kapoor</strong></td><td>3</td><td>ECE</td><td>89%</td><td><span class="badge ok">94%</span></td><td><span class="grade A">A+</span></td>
+                  <td><span class="row-expand-hint">View ›</span></td>
+                </tr>
+                <tr class="student-row" data-id="STU003" onclick="openStudentDetail('STU003')">
+                  <td>STU003</td><td><strong>Vikram Singh</strong></td><td>1</td><td>Mech</td><td>58%</td><td><span class="badge bad">67%</span></td><td><span class="grade C">C</span></td>
+                  <td><span class="row-expand-hint">View ›</span></td>
+                </tr>
+                <tr class="student-row" data-id="STU004" onclick="openStudentDetail('STU004')">
+                  <td>STU004</td><td><strong>Neha Patel</strong></td><td>4</td><td>Civil</td><td>84%</td><td><span class="badge ok">87%</span></td><td><span class="grade A">A</span></td>
+                  <td><span class="row-expand-hint">View ›</span></td>
+                </tr>
+                <tr class="student-row" data-id="STU005" onclick="openStudentDetail('STU005')">
+                  <td>STU005</td><td><strong>Rahul Gupta</strong></td><td>2</td><td>CSE</td><td>65%</td><td><span class="badge warn">78%</span></td><td><span class="grade B">B</span></td>
+                  <td><span class="row-expand-hint">View ›</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- STUDENT DETAIL MODAL (teacher) -->
+      <div id="student-detail-overlay" onclick="closeStudentDetail()">
+        <div id="student-detail-modal" onclick="event.stopPropagation()">
+          <button class="modal-close" onclick="closeStudentDetail()">✕</button>
+          <div id="student-detail-content"></div>
+        </div>
+      </div>
+
+      <!-- TEACHER: PERFORMANCE -->
+      <section class="page" id="page-t-performance">
+        <div class="page-header"><h1>Student Performance</h1><p>Academic overview of all students</p></div>
+        <div class="stats-grid">
+          <div class="stat-card purple"><div class="stat-label">Class Average</div><div class="stat-value">74%</div><div class="stat-sub">This semester</div></div>
+          <div class="stat-card green"><div class="stat-label">Top Score</div><div class="stat-value">89%</div><div class="stat-sub">Priya Kapoor</div></div>
+          <div class="stat-card red"><div class="stat-label">Needs Attention</div><div class="stat-value">2</div><div class="stat-sub">Students below 65%</div></div>
+        </div>
+        <div class="section-card">
+          <div class="section-card-header"><h3>Performance Overview</h3></div>
+          <div class="section-card-body table-scroll">
+            <table>
+              <thead><tr><th>Student</th><th>Roll</th><th>Branch</th><th>Score</th><th>Attendance</th><th>Grade</th></tr></thead>
+              <tbody id="teacher-performance-body">
+                <tr><td>Arjun Sharma</td> <td>STU001</td><td>CSE</td>  <td>76% <div class="progress-bar"><div class="progress-fill good"    style="width:76%"></div></div></td><td>85% <span class="badge ok">Good</span></td>   <td><span class="grade A">A</span></td></tr>
+                <tr><td>Priya Kapoor</td> <td>STU002</td><td>ECE</td>  <td>89% <div class="progress-bar"><div class="progress-fill good"    style="width:89%"></div></div></td><td>94% <span class="badge ok">Good</span></td>   <td><span class="grade A">A+</span></td></tr>
+                <tr><td>Vikram Singh</td> <td>STU003</td><td>Mech</td> <td>58% <div class="progress-bar"><div class="progress-fill low"     style="width:58%"></div></div></td><td>67% <span class="badge bad">Low</span></td>    <td><span class="grade C">C</span></td></tr>
+                <tr><td>Neha Patel</td>   <td>STU004</td><td>Civil</td><td>84% <div class="progress-bar"><div class="progress-fill good"    style="width:84%"></div></div></td><td>87% <span class="badge ok">Good</span></td>   <td><span class="grade A">A</span></td></tr>
+                <tr><td>Rahul Gupta</td>  <td>STU005</td><td>CSE</td>  <td>65% <div class="progress-bar"><div class="progress-fill average" style="width:65%"></div></div></td><td>78% <span class="badge warn">Average</span></td><td><span class="grade B">B</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- TEACHER: ATTENDANCE -->
+      <section class="page" id="page-t-attendance">
+        <div class="page-header"><h1>Take Attendance</h1><p>Mark today's attendance or update any previous date</p></div>
+        <div class="section-card">
+          <div class="section-card-header"><h3>Attendance Entry</h3><span id="attendance-save-status"></span></div>
+          <div class="section-card-body">
+            <div class="teacher-form-row">
+              <label>
+                Date
+                <input id="attendance-date" type="date" onchange="renderTeacherAttendance()" />
+              </label>
+              <label>
+                Quick Action
+                <select id="attendance-quick-action" onchange="applyAttendanceQuickAction()">
+                  <option value="">Choose...</option>
+                  <option value="present">Mark all present</option>
+                  <option value="absent">Mark all absent</option>
+                  <option value="holiday">Mark holiday</option>
+                </select>
+              </label>
+            </div>
+            <div class="table-scroll">
+              <table>
+                <thead><tr><th>Roll</th><th>Student</th><th>Status</th><th>Saved For Date</th></tr></thead>
+                <tbody id="teacher-attendance-body"></tbody>
+              </table>
+            </div>
+            <button class="teacher-primary-btn" onclick="saveTeacherAttendance()">Save Attendance</button>
+          </div>
+        </div>
+        <div class="section-card">
+          <div class="section-card-header"><h3>Attendance History</h3></div>
+          <div class="section-card-body table-scroll">
+            <table>
+              <thead><tr><th>Date</th><th>Present</th><th>Absent</th><th>Holiday</th><th>Class %</th></tr></thead>
+              <tbody id="teacher-attendance-history"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- TEACHER: EDIT MARKS -->
+      <section class="page" id="page-t-marks">
+        <div class="page-header"><h1>Edit Marks</h1><p>Subject: <strong>Data Structures</strong> &nbsp;·&nbsp; <span style="color:var(--accent);font-size:.75rem;">You can only edit marks for your assigned subject</span></p></div>
+        <div class="section-card">
+          <div class="section-card-header"><h3>Marks Editor — Data Structures</h3><span id="marks-save-status"></span></div>
+          <div class="section-card-body table-scroll">
+            <table>
+              <thead><tr><th>Roll</th><th>Student</th><th>Mid / 50</th><th>End / 100</th><th>Total</th><th>%</th><th>Grade</th></tr></thead>
+              <tbody id="teacher-marks-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- TEACHER: POST NOTICE -->
+      <section class="page" id="page-t-notices">
+        <div class="page-header"><h1>Post a Notice</h1><p>Announce to all students and parents</p></div>
+        <div class="section-card">
+          <div class="section-card-header"><h3>New Announcement</h3></div>
+          <div class="section-card-body">
+            <div class="notice-form">
+              <input id="n-title" type="text" placeholder="Title…" />
+              <select id="n-type">
+                <optgroup label="── Notices (show on Notices page)">
+                  <option value="exam">📝 Exam</option>
+                  <option value="general">📌 General</option>
+                  <option value="urgent">🚨 Urgent</option>
+                </optgroup>
+                <optgroup label="── Events (show on Events page)">
+                  <option value="event">🎉 Event / Fest</option>
+                  <option value="holiday">🏖 Holiday</option>
+                </optgroup>
+              </select>
+              <textarea id="n-body" rows="4" placeholder="Details…"></textarea>
+              <button onclick="postNotice()">Post Notice</button>
+            </div>
+          </div>
+        </div>
+        <div class="section-card">
+          <div class="section-card-header"><h3>Posted Notices <span style="font-size:.65rem;color:var(--text-muted);font-weight:400;">(exam · general · urgent)</span></h3></div>
+          <div class="section-card-body" id="posted-notices"></div>
+        </div>
+        <div class="section-card">
+          <div class="section-card-header"><h3>Posted Events <span style="font-size:.65rem;color:var(--text-muted);font-weight:400;">(event · holiday)</span></h3></div>
+          <div class="section-card-body" id="posted-events"></div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+</div><!-- /portal-teacher -->
+
+<script src="app.js"></script>
+</body>
+</html>
